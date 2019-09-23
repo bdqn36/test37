@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.user.UserMapper">
+	<select id="getLoginUser" resultType="User">
+		select * from smbms_user where userCode=#{userCode}
+	</select>
+	<select id="getUserList" resultMap="userList" parameterType="Map">
+		select u.*,r.roleName as userRoleName from smbms_user u,smbms_role r where u.userRole = r.id
+		<if test="userName != null and userName != ''">
+			and u.userName like CONCAT('%',#{userName},'%')
+		</if>
+		<if test="userRole != 0">
+			and u.userRole = #{userRole}
+		</if>
+		order by creationDate DESC limit #{currentPageNo},#{pageSize}
+	</select>
+	<resultMap type="User" id="userList">
+		<result property="id" column="id"/>
+		<result property="userCode" column="userCode"/>
+		<result property="userName" column="userName"/>
+		<result property="userPassword" column="userPassword"/>
+		<result property="gender" column="gender"/>
+		<result property="birthday" column="birthday"/>
+		<result property="phone" column="phone"/>
+		<result property="address" column="address"/>
+		<result property="userRole" column="userRole"/>
+		<result property="createdBy" column="createdBy"/>
+		<result property="creationDate" column="creationDate"/>
+		<result property="modifyBy" column="modifyBy"/>
+		<result property="modifyDate" column="modifyDate"/>
+		<result property="userRoleName" column="userRoleName"/>
+	</resultMap>
+	
+	<select id="getUserCount" resultType="int">
+		select count(1) as count from smbms_user u,smbms_role r where u.userRole = r.id
+		<if test="userName != null and userName != ''">
+			and u.userName like CONCAT('%',#{userName},'%')
+		</if>
+		<if test="userRole != 0">
+			and u.userRole = #{userRole}
+		</if>
+	</select>
+	
+</mapper>
